@@ -1,0 +1,60 @@
+GITHUB + JENKINS + EXCEL ASSIGNMENT (Windows)
+================================================
+
+1) Create a new PRIVATE GitHub repository named Jenkins-Excel-Automation.
+   Upload these tracked files to repository root:
+      Master_Records_100.xlsx
+      New_Records_10.xlsx
+      update_records.py
+      requirements.txt
+      Jenkinsfile
+      README.txt (optional)
+   DO NOT commit .venv, GitHub tokens, credentials or personal employee data.
+
+2) Install Git for Windows (system-wide), Python 3 (system-wide), and Jenkins Git/Pipeline plugins.
+   Jenkins runs as a Windows service under LocalSystem on this machine;
+   it might not inherit your personal user PATH. In Jenkins system settings
+   and in the service environment ensure git.exe and python.exe can be invoked.
+
+3) GitHub Settings > Developer settings > Personal access tokens > Fine-grained tokens:
+   select only this repository and give Contents: Read and write.
+   Keep the token secret. In Jenkins > Manage Jenkins > Credentials:
+   create Username with password credential:
+      Username = GitHub username
+      Password = token (NOT your GitHub account password)
+      ID = github-excel-token
+
+4) Jenkins dashboard > New Item > Pipeline > OK > Configure:
+     Definition = Pipeline script from SCM
+     SCM = Git
+     Repository URL = https://github.com/YOUR_USER/Jenkins-Excel-Automation.git
+     Credentials = github-excel-token
+     Branch Specifier = */main
+     Script Path = Jenkinsfile
+   Save. Leave automated SCM/webhook triggers OFF for this manual-click exercise.
+
+5) Click Build Now. Watch Console Output. Steps:
+      checkout latest GitHub files + create local main
+      create virtualenv in Jenkins workspace and install openpyxl
+      run update_records.py (dedupe by Employee ID)
+      commit Master_Records_100.xlsx only if changed
+      push latest master to GitHub
+      archive master as a Jenkins build artifact
+
+6) In GitHub, edit and commit New_Records_10.xlsx with NEW unique IDs.
+   Click Build Now again. Master workbook in GitHub increases to 110,
+   then 120, and so on. Same incoming IDs are skipped on repeated builds.
+
+TROUBLESHOOTING:
+ - 'python is not recognized': install Python system-wide and configure System PATH,
+   then restart the Jenkins Windows service. 'py' from your user account
+   is not always available to the LocalSystem service.
+ - 'git not recognized': install Git for Windows system-wide, restart Jenkins.
+ - 'Failed to authenticate' / HTTP 403: credential ID, PAT permission,
+   repo access and branch protection must be checked.
+ - 'git push rejected (non-fast-forward)': a simultaneous GitHub update occurred;
+   use a new Build Now after syncing, do not force push.
+ - Jenkins job should have one writer only: disable concurrent builds.
+ - Avoid auto-trigger on Jenkins-generated pushes to prevent rebuild loops.
+ - The repository is the persistent source of truth; the Jenkins workspace
+   can be cleaned without losing changes committed to GitHub.

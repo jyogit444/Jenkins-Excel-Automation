@@ -1,0 +1,25 @@
+ASSIGNMENT: Jenkins Automation for Excel Record Updates
+
+Objective:
+The objective of this assignment was to install Jenkins on my local Windows
+machine and configure a build job that automatically updates an Excel file.
+
+Implementation:
+I created a master Excel workbook with 100 employee records and another
+workbook containing 10 new employee records. I used a Python script with the
+openpyxl library to read both files, compare Employee IDs, and append only
+new records to the master workbook. I then configured a Jenkins Freestyle
+project with an Execute Windows batch command that calls the Python script.
+
+How it works:
+Whenever I click Build Now, Jenkins executes the script. The script checks
+which incoming Employee IDs already exist, skips duplicates, and adds only
+new rows. For the first build, the master increases from 100 to 110 records.
+For another build with no additional data, it stays at 110. If I later add
+10 more unique incoming records and trigger another build, it increases to 120.
+
+What I learned:
+This assignment helped me understand how Jenkins can automate a repeated
+file-processing task. Jenkins acts as the trigger/orchestrator, while Python
+handles the data update. I also learned why unique record IDs are important
+and how build logs help verify whether automation succeeded.
